@@ -1,0 +1,1021 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cosmic Coder | Futuristic Portfolio</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        :root {
+            --primary: #6e00ff;
+            --secondary: #ff00e6;
+            --accent: #00f7ff;
+            --dark: #0a0a1a;
+            --darker: #050510;
+            --text: #e0e0ff;
+        }
+        
+        body {
+            background-color: var(--dark);
+            color: var(--text);
+            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+            overflow-x: hidden;
+            scroll-behavior: smooth;
+        }
+        
+        .bg-cosmic {
+            background: radial-gradient(ellipse at bottom, var(--darker) 0%, #000000 100%);
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+        }
+        
+        .section {
+            padding: 6rem 2rem;
+            position: relative;
+            min-height: 100vh;
+        }
+        
+        .section-title {
+            font-size: 3rem;
+            margin-bottom: 3rem;
+            background: linear-gradient(90deg, var(--primary), var(--secondary));
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            text-transform: uppercase;
+            letter-spacing: 0.2rem;
+            position: relative;
+        }
+        
+        .section-title::after {
+            content: '';
+            position: absolute;
+            left: 0;
+            bottom: -10px;
+            width: 100px;
+            height: 4px;
+            background: linear-gradient(90deg, var(--primary), transparent);
+            border-radius: 2px;
+        }
+        
+        .btn {
+            display: inline-block;
+            padding: 0.8rem 1.8rem;
+            background: linear-gradient(145deg, var(--primary), var(--secondary));
+            color: white;
+            border-radius: 50px;
+            font-weight: 600;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(110, 0, 255, 0.4);
+            position: relative;
+            overflow: hidden;
+            z-index: 1;
+        }
+        
+        .btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 20px rgba(110, 0, 255, 0.6);
+        }
+        
+        .btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.1), transparent);
+            transition: 0.5s;
+            z-index: -1;
+        }
+        
+        .btn:hover::before {
+            left: 100%;
+        }
+        
+        /* 3D Card Styles */
+        .card-3d {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 16px;
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            padding: 2rem;
+            transition: all 0.3s ease;
+            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.36);
+            perspective: 1000px;
+            transform-style: preserve-3d;
+        }
+        
+        .card-3d:hover {
+            transform: translateY(-10px) rotateX(5deg) rotateY(5deg);
+            box-shadow: 0 25px 60px rgba(110, 0, 255, 0.5);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+        
+        /* Particles */
+        #particles-js {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+        }
+        
+        /* Glow Effects */
+        .glow {
+            text-shadow: 0 0 8px currentColor;
+        }
+        
+        /* Responsive Adjustments */
+        @media (max-width: 768px) {
+            .section {
+                padding: 4rem 1.5rem;
+            }
+            
+            .section-title {
+                font-size: 2.2rem;
+            }
+        }
+        
+        /* Skills Animation */
+        .skill-bar {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 50px;
+            height: 8px;
+            margin-top: 0.5rem;
+            overflow: hidden;
+            position: relative;
+        }
+        
+        .skill-progress {
+            background: linear-gradient(90deg, var(--primary), var(--accent));
+            height: 100%;
+            border-radius: 50px;
+            position: relative;
+            animation: animateSkill 1.5s ease-out forwards;
+            transform-origin: left;
+        }
+        
+        @keyframes animateSkill {
+            from {
+                transform: scaleX(0);
+            }
+            to {
+                transform: scaleX(1);
+            }
+        }
+        
+        /* Timeline */
+        .timeline {
+            position: relative;
+            padding-left: 3rem;
+            margin-top: 3rem;
+        }
+        
+        .timeline::before {
+            content: '';
+            position: absolute;
+            left: 0.7rem;
+            top: 0;
+            height: 100%;
+            width: 2px;
+            background: linear-gradient(to bottom, var(--primary), var(--secondary));
+        }
+        
+        .timeline-item {
+            position: relative;
+            margin-bottom: 2.5rem;
+        }
+        
+        .timeline-item::before {
+            content: '';
+            position: absolute;
+            left: -3rem;
+            top: 0.2rem;
+            width: 1rem;
+            height: 1rem;
+            border-radius: 50%;
+            background: linear-gradient(145deg, var(--primary), var(--secondary));
+            box-shadow: 0 0 0 4px rgba(110, 0, 255, 0.2);
+        }
+        
+        /* Floating Elements */
+        .floating {
+            animation: floating 8s ease-in-out infinite;
+        }
+        
+        @keyframes floating {
+            0% { transform: translateY(0px) rotate(0deg); }
+            50% { transform: translateY(-20px) rotate(5deg); }
+            100% { transform: translateY(0px) rotate(0deg); }
+        }
+        
+        /* Contact Form */
+        .form-input {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 8px;
+            padding: 1rem;
+            width: 100%;
+            color: white;
+            margin-bottom: 1.5rem;
+            transition: all 0.3s ease;
+        }
+        
+        .form-input:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(110, 0, 255, 0.2);
+        }
+        
+        /* Neon Grid */
+        .neon-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            gap: 1.5rem;
+        }
+        
+        /* Parallax Scrolling Effect */
+        .parallax {
+            background-attachment: fixed;
+            background-position: center;
+            background-repeat: no-repeat;
+            background-size: cover;
+        }
+    </style>
+</head>
+<body>
+    <!-- Cosmic Background -->
+    <div id="bg-canvas" class="bg-cosmic"></div>
+    <div id="particles-js"></div>
+    
+    <!-- Navigation -->
+    <nav class="fixed w-full z-50 backdrop-blur-md bg-black bg-opacity-50 py-4 px-8 border-b border-white border-opacity-10">
+        <div class="container mx-auto flex justify-between items-center">
+            <a href="#home" class="text-2xl font-bold glow" style="color: var(--accent);">FUTURISTIC <span style="color: var(--secondary);">CODER</span></a>
+            <div class="hidden md:flex space-x-8">
+                <a href="#about" class="text-white hover:text-purple-300 transition">About</a>
+                <a href="#skills" class="text-white hover:text-purple-300 transition">Skills</a>
+                <a href="#leadership" class="text-white hover:text-purple-300 transition">Leadership</a>
+                <a href="#certifications" class="text-white hover:text-purple-300 transition">Certifications</a>
+                <a href="#projects" class="text-white hover:text-purple-300 transition">Projects</a>
+                <a href="#contact" class="text-white hover:text-purple-300 transition">Contact</a>
+            </div>
+            <button class="md:hidden text-white">
+                <i class="fas fa-bars text-2xl"></i>
+            </button>
+        </div>
+    </nav>
+    
+    <!-- Hero Section -->
+    <section id="home" class="section flex items-center justify-center text-center">
+        <div class="container mx-auto px-4">
+            <div class="card-3d max-w-2xl mx-auto p-8 floating">
+                <h1 class="text-5xl md:text-6xl font-bold mb-6">
+                    <span class="glow" style="color: var(--accent);">HELLO,</span>
+                    <span class="glow" style="color: white;">I'M A</span>
+                    <span class="glow" style="color: var(--secondary);">FULL-STACK DEVELOPER</span>
+                </h1>
+                <p class="text-xl mb-8 opacity-90">Building futuristic digital experiences with cutting-edge technologies</p>
+                <div class="space-x-4">
+                    <a href="#about" class="btn glow">
+                        <i class="fas fa-user-astronaut mr-2"></i>Explore My Universe
+                    </a>
+                    <a href="#contact" class="btn bg-black bg-opacity-50 border border-white border-opacity-20 glow">
+                        <i class="fas fa-paper-plane mr-2"></i>Contact Me
+                    </a>
+                </div>
+            </div>
+        </div>
+    </section>
+    
+    <!-- About Section -->
+    <section id="about" class="section">
+        <div class="container mx-auto px-4">
+            <h2 class="section-title">About Me</h2>
+            <div class="grid md:grid-cols-2 gap-12 items-center">
+                <div class="relative">
+                    <div class="card-3d overflow-hidden">
+                 <img src="C:\Users\vaibh\OneDrive\Desktop\VAIBHAV PROFILE.jpg" alt="Your Name - Professional Portrait" class="w-full h-auto" />                   
+                 </div>
+                    <div class="absolute -bottom-6 -right-6 w-24 h-24 rounded-full bg-gradient-to-br from-purple-500 to-pink-500 opacity-70 blur-xl"></div>
+                </div>
+                <div>
+                    <div class="card-3d p-8 mb-5">
+                        <h3 class="text-2xl font-bold mb-4" style="color: var(--accent);">VAIBHAV GUPTA </h3>
+                       <p class="mb-6">  -  "Turning ideas into interactive digital experiences."</p>
+  <p class="mb-6">I’m a third-year B.Tech student specializing in Information Technology at University School of Information, Communication and Technology (USICT), GGSIPU Main Campus, Sector-16C. I’m deeply passionate about Web Technologies and have been actively honing my skills in Full Stack Web Development.</p>
+                        <p class="mb-6">Beyond coding, I’m a sports enthusiast who loves playing cricket, badminton, and basketball, which helps me stay energetic and team-focused. I take pride in my leadership abilities, strong communication, and a proactive approach to learning new things in tech. </p>
+                        <p class="mb-6">I believe in building, breaking, learning, and growing. This is just the beginning, and I’m eager to contribute, collaborate, and create in the ever-evolving world of web development. </p>
+                    </div>
+                    <div class="grid grid-cols-2 gap-4">
+                        <div class="card-3d p-4 text-center">
+                            <h4 class="font-bold mb-2" style="color: var(--secondary);">Years Experience</h4>
+                            <p class="text-3xl font-bold" style="color: var(--accent);">Begineer</p>
+                        </div>
+                        <div class="card-3d p-4 text-center">
+                            <h4 class="font-bold mb-2" style="color: var(--secondary);">Projects Completed</h4>
+                            <p class="text-3xl font-bold" style="color: var(--accent);">2 </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    
+    <!-- Skills Section -->
+    <section id="skills" class="section">
+        <div class="container mx-auto px-4">
+            <h2 class="section-title">Skills & Expertise</h2>
+            
+            <div class="grid md:grid-cols-2 gap-8 mb-12">
+                <div class="card-3d p-8">
+                    <h3 class="text-2xl font-bold mb-4" style="color: var(--accent);">Technical Skills</h3>
+                    
+                    <div class="mb-6">
+                        <div class="flex justify-between mb-1">
+                            <span>HTML , CSS & BOOTSRAP</span>
+                            <span>80%</span>
+                        </div>
+                        <div class="skill-bar">
+                            <div class="skill-progress" style="width: 80%"></div>
+                        </div>
+                    </div>
+                    <div class="mb-6">
+                        <div class="flex justify-between mb-1">
+                            <span>JavaScript/TypeScript</span>
+                            <span>65%</span>
+                        </div>
+                        <div class="skill-bar">
+                            <div class="skill-progress" style="width: 65%"></div>
+                        </div>
+                    </div>
+                    
+                    <div class="mb-6">
+                        <div class="flex justify-between mb-1">
+                            <span>React & Next.js</span>
+                            <span>70%</span>
+                        </div>
+                        <div class="skill-bar">
+                            <div class="skill-progress" style="width: 70%"></div>
+                        </div>
+                    </div>
+                    
+                    <div class="mb-6">
+                        <div class="flex justify-between mb-1">
+                            <span>Node.js</span>
+                            <span>60%</span>
+                        </div>
+                        <div class="skill-bar">
+                            <div class="skill-progress" style="width: 60%"></div>
+                        </div>
+                    </div>
+                    
+                    <div class="mb-6">
+                        <div class="flex justify-between mb-1">
+                            <span>C  &  C++ ( programming language ) </span>
+                            <span>60%</span>
+                        </div>
+                        <div class="skill-bar">
+                            <div class="skill-progress" style="width: 60%"></div>
+                        </div>
+                    </div>
+                    
+                    <div class="mb-6">
+                        <div class="flex justify-between mb-1">
+                            <span>DBMS & MYSQL</span>
+                            <span>75%</span>
+                        </div>
+                        <div class="skill-bar">
+                            <div class="skill-progress" style="width: 75%"></div>
+                        </div>
+                    </div>
+
+                    <div>
+                        <div class="flex justify-between mb-1">
+                            <span>UI/UX Design</span>
+                            <span>40%</span>
+                        </div>
+                        <div class="skill-bar">
+                            <div class="skill-progress" style="width: 40%"></div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="card-3d p-8">
+                    <h3 class="text-2xl font-bold mb-4" style="color: var(--accent);">Soft Skills</h3>
+                    
+                    <div class="space-y-6">
+                        <div class="flex items-start">
+                            <div class="bg-purple-500 bg-opacity-20 p-3 rounded-full mr-4">
+                                <i class="fas fa-users" style="color: var(--secondary);"></i>
+                            </div>
+                            <div>
+                                <h4 class="font-bold mb-1">Leadership</h4>
+                                <p class="opacity-80">Experienced in leading cross-functional teams and mentoring junior developers.</p>
+                            </div>
+                        </div>
+                        
+                        <div class="flex items-start">
+                            <div class="bg-purple-500 bg-opacity-20 p-3 rounded-full mr-4">
+                                <i class="fas fa-comments" style="color: var(--secondary);"></i>
+                            </div>
+                            <div>
+                                <h4 class="font-bold mb-1">Communication</h4>
+                                <p class="opacity-80">Effective at translating technical concepts for non-technical stakeholders.</p>
+                            </div>
+                        </div>
+                        
+                        <div class="flex items-start">
+                            <div class="bg-purple-500 bg-opacity-20 p-3 rounded-full mr-4">
+                                <i class="fas fa-lightbulb" style="color: var(--secondary);"></i>
+                            </div>
+                            <div>
+                                <h4 class="font-bold mb-1">Problem Solving</h4>
+                                <p class="opacity-80">Adept at breaking down complex problems into manageable solutions.</p>
+                            </div>
+                        </div>
+                        
+                        <div class="flex items-start">
+                            <div class="bg-purple-500 bg-opacity-20 p-3 rounded-full mr-4">
+                                <i class="fas fa-random" style="color: var(--secondary);"></i>
+                            </div>
+                            <div>
+                                <h4 class="font-bold mb-1">Adaptability</h4>
+                                <p class="opacity-80">Quick to learn new technologies and adjust to changing project requirements.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="card-3d p-8">
+                <h3 class="text-2xl font-bold mb-6" style="color: var(--accent);">Tech Stack</h3>
+                <div class="grid grid-cols-3 md:grid-cols-5 gap-6 text-center">
+                    <div class="tech-item">
+                        <i class="fab fa-js text-5xl mb-2" style="color: #f0db4f;"></i>
+                        <p>JavaScript</p>
+                    </div>
+                    <div class="tech-item">
+                        <i class="fab fa-react text-5xl mb-2" style="color: #61dafb;"></i>
+                        <p>React</p>
+                    </div>
+                    <div class="tech-item">
+                        <i class="fab fa-node-js text-5xl mb-2" style="color: #68a063;"></i>
+                        <p>Node.js</p>
+                    </div>
+                    <div class="tech-item">
+                        <i class="fab fa-python text-5xl mb-2" style="color: #ff9900;"></i>
+                        <p>PYTHON</p>
+                    </div>
+                    <div class="tech-item">
+                        <i class="fas fa-database text-5xl mb-2" style="color: var(--accent);"></i>
+                        <p>MongoDB</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+                  
+    <!-- Leadership Section -->
+    <section id="leadership" class="section">
+        <div class="container mx-auto px-4">
+            <h2 class="section-title">Leadership & Volunteer</h2>
+            
+            <div class="grid md:grid-cols-2 gap-8">
+                <!-- Leadership Experiences -->
+                <div class="card-3d p-8">
+                    <h3 class="text-2xl font-bold mb-6" style="color: var(--accent);">Leadership Positions</h3>
+                    
+                    <div class="timeline">
+                        <div class="timeline-item">
+                            <h4 class="font-bold text-lg">Junior Coordinator Head</h4>
+                            <p class="text-sm opacity-70 mb-2"> NSCC INDIA | JAN 2025 - PRESENT</p>
+                            <p>NSCC India (National Student Cultural Council): Supports Different delhi colleges like DU , IIIT Delhi by providing volunteers and promotion for smooth execution of large-scale cultural festivals and events.</p>
+                        </div>
+                        
+                        <div class="timeline-item">
+                            <h4 class="font-bold text-lg">Operations Manager</h4>
+                            <p class="text-sm opacity-70 mb-2"> TECHSPACE - GGSIPU  | DEC 2024 - PRESENT </p>
+                            <p>TECHSPACE is basically a Technical Society of GGSIPU , which organises bootcamps and tech fest for learning emerging technologies.</p>
+                        </div>
+                        
+                        <div class="timeline-item">
+                            <h4 class="font-bold text-lg">Operations And Event Manager</h4>
+                            <p class="text-sm opacity-70 mb-2"> IEEE - GGSIPU | OCT 2024 - PRESENT</p>
+                            <p>It is a technical society of GGSIPU organizing on-campus tech events aimed at promoting diverse technical skills and student engagement.</p>
+                        </div>
+                        <div class="timeline-item">
+                            <h4 class="font-bold text-lg">Marketing And Public Relations Manager</h4>
+                            <p class="text-sm opacity-70 mb-2"> ALL IPU COMMUNITY | SEPT 2024-PRESENT</p>
+                            <p>ALL IPU COMMUNITY is a students-led community initiative aimed at connecting all IPU colleges by organizing collaborative events and fostering inter-college engagement.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Volunteer Experiences -->
+                <div class="card-3d p-8">
+                    <h3 class="text-2xl font-bold mb-6" style="color: var(--accent);">Volunteer Work</h3>
+                    
+                    <div class="timeline">
+                        <div class="timeline-item">
+                            <h4 class="font-bold text-lg">CODEDOJO Club Member</h4>
+                            <p class="text-sm opacity-70 mb-2"> TECHSPACE - GGSIPU | DEC 2024 - PRESENT</p>
+                            <p>CODEDOJO ( a sub-club from TECHSPACE ) in that got opportunity of Conducting DSA sessions, teaching core concepts to students through interactive, beginner-friendly lectures and problem-solving practice.  .</p>
+                        </div>
+
+                        <div class="timeline-item">
+                            <h4 class="font-bold text-lg">SYNOPSIS 10.0</h4>
+                            <p class="text-sm opacity-70 mb-2"> IEEE - GGSIPU | DEC 2024 - PRESENT</p>
+                            <p>Synapse 10.0 is an annual IEEE GGSIPU Series of tech event. I contributed and coordinated to multiple flagship events, fostering leadership, creativity, technical skills, and cross-team collaboration throughout the fest.  </p>
+                        </div>
+
+                        <div class="timeline-item">
+                            <h4 class="font-bold text-lg"> MEMBER </h4>
+                            <p class="text-sm opacity-70 mb-2"> CSR CLUB - GGSIPU | DEC 2024 - Present</p>
+                            <p>CSR club ( Coorporate Social Responsibilty) in which we had  webinars featuring guest speakers with differnt domains and aggendas online .</p>
+                        </div>
+                        <div class="timeline-item">
+                            <h4 class="font-bold text-lg"> Program Coordinator </h4>
+                            <p class="text-sm opacity-70 mb-2"> ANOOGOONJ - GGSIPU | FEB 2025 </p>
+                            <p> Assisted in organizing GGSIPU’s annual 3-day cultural fest featuring diverse events and star-studded artist night performances.</p>
+                        </div>
+                        
+                        <div class="timeline-item">
+                            <h4 class="font-bold text-lg">Coordinator</h4>
+                            <p class="text-sm opacity-70 mb-2"> GGSIPU INTER SPORTS MEET | OCT 2023</p>
+                            <p>Managed Lawn Tennis event during 3-day university-wide sports meet involving participation from all affiliated and main campus colleges.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    
+    <!-- Certifications Section -->
+    <section id="certifications" class="section">
+        <div class="container mx-auto px-4">
+            <h2 class="section-title">Certifications</h2>
+            
+            <div class="neon-grid">
+                <!-- Certification Cards -->
+                <div class="card-3d p-6 hover:scale-105 transition-transform">
+                    <div class="flex items-start mb-4">
+                        <div class="bg-purple-500 bg-opacity-20 p-3 rounded-full mr-4">
+                            <i class="fas fa-certificate text-2xl" style="color: var(--accent);"></i>
+                        </div>
+                        <div>
+                            <a href="https://trainings.internshala.com/s/v/3719165/94595ac4" target="_blank" rel="noopener noreferrer" class="hover:text-purple-300">
+                                <h3 class="font-bold text-lg">FULL STACK WEB DEVLOPER </h3>
+                            </a>
+                            <p class="text-sm opacity-70">INTERNSHALA TRAININGS</p>
+                        </div>
+                    </div>
+                    <p class="text-sm mb-4">Completed an 8-week Web Development training by Internshala Trainings, covering HTML, CSS, JS, PHP, DBMS, React, AI modules; scored 90%, recognized as a top performer.</p>
+                    <div class="flex items-center justify-between mt-4">
+                        <span class="text-xs opacity-70">Issued: JUL 2025 · Credential ID: 2uv698ol8kb</span>
+                        <a href="https://trainings.internshala.com/s/v/3719165/94595ac4" target="_blank" rel="noopener noreferrer" class="text-xs text-purple-300 hover:underline">
+                            View Certificate <i class="fas fa-external-link-alt ml-1"></i>
+                        </a>
+                    </div>
+                </div>
+                
+  <div class="card-3d p-6 hover:scale-105 transition-transform">
+                    <div class="flex items-start mb-4">
+                        <div class="bg-purple-500 bg-opacity-20 p-3 rounded-full mr-4">
+                            <i class="fas fa-certificate text-2xl" style="color: var(--accent);"></i>
+                        </div>
+                        <div>
+                            <a href="https://trainings.internshala.com/s/v/3719402/3ada2979" target="_blank" rel="noopener noreferrer" class="hover:text-purple-300">
+                                <h3 class="font-bold text-lg">NSDC Certified Developer</h3>
+                            </a>
+                            <p class="text-sm opacity-70">INTERNSHALA TRAININGS</p>
+                        </div>
+                    </div>
+                    <p class="text-sm mb-4">Successfully completed the Web Development course with Grade A from Scholiverse Educare Pvt. Ltd., certified by Internshala Trainings under Skill India & NSDC, July 2025.</p>
+                    <div class="flex items-center justify-between mt-4">
+                        <span class="text-xs opacity-70">Issued: JUL 2025 · Credential ID: 1esm1bfk9oqmawsx</span>
+                        <a href="https://trainings.internshala.com/s/v/3719402/3ada2979" target="_blank" rel="noopener noreferrer" class="text-xs text-purple-300 hover:underline">
+                            View Certificate <i class="fas fa-external-link-alt ml-1"></i>
+                        </a>
+                    </div>
+                </div>
+            
+              <div class="card-3d p-6 hover:scale-105 transition-transform">
+                    <div class="flex items-start mb-4">
+                        <div class="bg-purple-500 bg-opacity-20 p-3 rounded-full mr-4">
+                            <i class="fas fa-certificate text-2xl" style="color: var(--accent);"></i>
+                        </div>
+                        <div>
+                            <a href="https://media.licdn.com/dms/image/v2/D4D22AQEcJ-GQ4bjQtA/feedshare-shrink_1280/B4DZPtoHcUHMAo-/0/1734858537550?e=1754524800&v=beta&t=7AIX_nYvh_y9oCGpKb26Zlb6wDaulpNR6d386fT4Vzw">
+                                <h3 class="font-bold text-lg">SYNAPSE 10.O</h3>
+                            </a>
+                            <p class="text-sm opacity-70">IEEE - GGSIPU</p>
+                        </div>
+                    </div>
+                    <p class="text-sm mb-4">Contributed as an Event Management Team Member at Synapse 10.0, IEEE GGSIPU’s flagship tech event— led planning and execution of major events, fostering teamwork, leadership, creativity, and tech engagement.</p>
+                    <div class="flex items-center justify-between mt-4">
+                        <span class="text-xs opacity-70">Issued: Jan 2022 </span>
+                        <a href="https://media.licdn.com/dms/image/v2/D4D22AQEcJ-GQ4bjQtA/feedshare-shrink_1280/B4DZPtoHcUHMAo-/0/1734858537550?e=1754524800&v=beta&t=7AIX_nYvh_y9oCGpKb26Zlb6wDaulpNR6d386fT4Vzw">
+                            View Certificate <i class="fas fa-external-link-alt ml-1"></i>
+                        </a>
+                    </div>
+                </div>
+            
+            </div>
+        </div>
+    </section>
+    
+    <!-- Projects Section -->
+    <section id="projects" class="section">
+        <div class="container mx-auto px-4">
+            <h2 class="section-title">My Projects</h2>
+            
+            <div class="neon-grid">
+                <!-- Portfolio Project -->
+                <div class="card-3d p-6 hover:scale-105 transition-transform">
+                    <div class="flex items-start mb-4">
+                        <img src="https://storage.googleapis.com/workspace-0f70711f-8b4e-4d94-86f1-2a93ccde5887/image/bf0aad59-e065-44f4-ab08-e429946cfce7.png" alt="Cosmic Portfolio Website Screenshot" class="w-full h-auto rounded-lg"/>
+                    </div>
+                    <div class="mb-4">
+                        <a href=""C:\Users\vaibh\OneDrive\Desktop\PORTFOL 1\updated portfolio.html"" target="_blank" rel="noopener noreferrer" class="hover:text-purple-300">
+                            <h3 class="text-xl font-bold mb-2" style="color: var(--accent);">Cosmic Portfolio Website</h3>
+                        </a>
+                        <p class="mb-4">This futuristic, space-themed portfolio is the first website I developed .This futuristic portfolio showcases my skills with immersive 3D effects created using Three.js. The responsive design adapts beautifully across all devices and features a dark cosmic theme with particle animations. </p>
+                    </div>
+                    <div class="flex flex-wrap gap-2 mb-4">
+                        <span class="bg-purple-500 bg-opacity-20 px-3 py-1 rounded-full text-sm">HTML/CSS</span>
+                        <span class="bg-purple-500 bg-opacity-20 px-3 py-1 rounded-full text-sm">JavaScript</span>
+                        <span class="bg-purple-500 bg-opacity-20 px-3 py-1 rounded-full text-sm">Three.js</span>
+                        <span class="bg-purple-500 bg-opacity-20 px-3 py-1 rounded-full text-sm">Responsive Design</span>
+                    </div>
+                    <a href=""C:\Users\vaibh\OneDrive\Desktop\PORTFOL 1\updated portfolio.html"" target="_blank" rel="noopener noreferrer" class="btn w-full text-center mt-4 hover:bg-purple-600 transition-colors">
+                        View Live Project <i class="fas fa-external-link-alt ml-2"></i>
+                    </a>
+                </div> 
+                
+                    <div class="card-3d p-6 hover:scale-105 transition-transform">
+                    <div class="flex items-start mb-4">
+                        <img src="data:image/jpeg;base64,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" alt="Cosmic Portfolio Website Screenshot" class="w-full h-auto rounded-lg"/>
+                    </div>
+                    <div class="mb-4">
+                        <a href="C:\Users\vaibh\OneDrive\Desktop\PORTFOL 1\TIC TAC TOE .html" target="_blank" rel="noopener noreferrer" class="hover:text-purple-300">
+                            <h3 class="text-xl font-bold mb-2" style="color: var(--accent);">Cosmic Tic Tac Toe Game</h3>
+                        </a>
+                        <p class="mb-4">The Cosmic Tic Tac Toe is an interactive web-based game that combines classic gameplay with a futuristic space-themed design. Built using HTML, CSS, and JavaScript, this project features a visually stunning interface with glowing X's and O's . Players can challenge themselves against a computer opponent with adjustable difficulty levels , enhancing the gaming experience.</p>
+                    </div>
+                    <div class="flex flex-wrap gap-2 mb-4">
+                        <span class="bg-purple-500 bg-opacity-20 px-3 py-1 rounded-full text-sm">HTML/CSS</span>
+                        <span class="bg-purple-500 bg-opacity-20 px-3 py-1 rounded-full text-sm">JavaScript</span>
+                        <span class="bg-purple-500 bg-opacity-20 px-3 py-1 rounded-full text-sm">Responsive Design</span>
+                        <span class="bg-purple-500 bg-opacity-20 px-3 py-1 rounded-full text-sm">CSS Animations</span>
+                        
+                    </div>
+                    <a href="C:\Users\vaibh\OneDrive\Desktop\PORTFOL 1\TIC TAC TOE .html" target="_blank" rel="noopener noreferrer" class="btn w-full text-center mt-4 hover:bg-purple-600 transition-colors">
+                        View Live Project <i class="fas fa-external-link-alt ml-2"></i>
+                    </a>           
+            </div>
+        </div>
+    </section>
+
+    <!-- Contact Section -->
+    <section id="contact" class="section">
+        <div class="container mx-auto px-4">
+            <h2 class="section-title">Get In Touch</h2>
+            
+            <div class="grid md:grid-cols-2 gap-12">
+                <div>
+                    <h3 class="text-2xl font-bold mb-4" style="color: var(--accent);">Contact Information</h3>
+                    
+                    <div class="card-3d p-8">
+                        <div class="flex items-start mb-6">
+                            <div class="bg-purple-500 bg-opacity-20 p-3 rounded-full mr-4">
+                                <i class="fas fa-envelope" style="color: var(--secondary);"></i>
+                            </div>
+                            <div>
+                                <h4 class="font-bold mb-1">Email</h4>
+                                <p>vaibhav0001gupta@rediffmail.com</p>
+                            </div>
+                        </div>
+                        
+                        <div class="flex items-start mb-6">
+                            <div class="bg-purple-500 bg-opacity-20 p-3 rounded-full mr-4">
+                                <i class="fas fa-map-marker-alt" style="color: var(--secondary);"></i>
+                            </div>
+                            <div>
+                                <h4 class="font-bold mb-1">Location</h4>
+                                <p>New Delhi , India</p>
+                            </div>
+                        </div>
+                        
+                        <div class="flex items-start">
+                            <div class="bg-purple-500 bg-opacity-20 p-3 rounded-full mr-4">
+                                <i class="fas fa-globe" style="color: var(--secondary);"></i>
+                            </div>
+                            <div>
+                                <h4 class="font-bold mb-1">Connect</h4>
+                               <div class="flex space-x-4 mt-2">
+                                    <a href="https://github.com/Vaibhavgupta-0001" target="_blank" rel="noopener noreferrer" class="text-2xl hover:text-purple-300 transition"><i class="fab fa-github"></i></a>
+                                    <a href="https://www.linkedin.com/in/vaibhav-gupta-73a348320?utm_source=share&utm_campaign=share_via&utm_content=profile&utm_medium=android_app" target="_blank" rel="noopener noreferrer" class="text-2xl hover:text-purple-300 transition"><i class="fab fa-linkedin"></i></a>
+                                    <a href="#" class="text-2xl hover:text-purple-300 transition"><i class="fab fa-twitter"></i></a>
+                                    <a href="#" class="text-2xl hover:text-purple-300 transition"><i class="fab fa-dev"></i></a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div>
+                    <h3 class="text-2xl font-bold mb-4" style="color: var(--accent);"> Thanks for visiting !! let’s connect to build something impactful together. 🚀 </h3>
+                    
+                    <div class="card-3d p-8">
+                        <form id="contactForm">
+                            <div class="mb-6">
+                                <input type="text" id="name" class="form-input" placeholder="Your Name" required>
+                            </div>
+                            
+                            <div class="mb-6">
+                                <input type="email" id="email" class="form-input" placeholder="Your Email" required>
+                            </div>
+                            
+                            <div class="mb-6">
+                                <input type="text" id="subject" class="form-input" placeholder="Subject">
+                            </div>
+                            
+                            <div class="mb-6">
+                                <textarea id="message" class="form-input h-32" placeholder="Your Message" required></textarea>
+                            </div>
+                            
+                            <button type="submit" class="btn w-full glow">
+                                <i class="fas fa-paper-plane mr-2"></i>Send Message
+                            </button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    
+    <!-- Footer -->
+    <footer class="py-8 text-center border-t border-white border-opacity-10">
+        <div class="container mx-auto px-4">
+            <div class="flex justify-center space-x-6 mb-6">
+                <a href="https://github.com/Vaibhavgupta-0001" target="_blank" rel="noopener noreferrer" class="text-xl hover:text-purple-300 transition"><i class="fab fa-github"></i></a>
+                <a href="https://www.linkedin.com/in/vaibhav-gupta-73a348320?utm_source=share&utm_campaign=share_via&utm_content=profile&utm_medium=android_app" target="_blank" rel="noopener noreferrer" class="text-xl hover:text-purple-300 transition"><i class="fab fa-linkedin"></i></a>
+                <a href="#" class="text-xl hover:text-purple-300 transition"><i class="fab fa-twitter"></i></a>
+                <a href="#" class="text-xl hover:text-purple-300 transition"><i class="fab fa-codepen"></i></a>
+            </div>
+            <p class="text-sm opacity-70">© 2025 Futuristic Coder. All rights reserved with Vaibhav Gupta. <span class="block md:inline">Designed with <i class="fas fa-heart" style="color: var(--secondary);"></i> in the cosmic void.</span></p>
+        </div>
+    </footer>
+    
+    <!-- Floating Cursor Trails -->
+    <div id="cursor-trail"></div>
+    
+    <script>
+        // Initialize Three.js background
+        document.addEventListener('DOMContentLoaded', function() {
+            // Setup Three.js background
+            const bgContainer = document.getElementById('bg-canvas');
+            const width = bgContainer.clientWidth;
+            const height = bgContainer.clientHeight;
+            
+            const scene = new THREE.Scene();
+            const camera = new THREE.PerspectiveCamera(75, width / height, 0.1, 1000);
+            const renderer = new THREE.WebGLRenderer({ alpha: true, antialias: true });
+            renderer.setSize(width, height);
+            bgContainer.appendChild(renderer.domElement);
+            
+            // Create stars
+            const starsGeometry = new THREE.BufferGeometry();
+            const starCount = 1000;
+            const positions = new Float32Array(starCount * 3);
+            
+            for (let i = 0; i < starCount; i++) {
+                const i3 = i * 3;
+                positions[i3] = (Math.random() - 0.5) * 2000;
+                positions[i3 + 1] = (Math.random() - 0.5) * 2000;
+                positions[i3 + 2] = (Math.random() - 0.5) * 2000;
+            }
+            
+            starsGeometry.setAttribute('position', new THREE.BufferAttribute(positions, 3));
+            
+            const starsMaterial = new THREE.PointsMaterial({
+                color: 0xffffff,
+                size: 1,
+                sizeAttenuation: true,
+                transparent: true,
+                opacity: 0.8
+            });
+            
+            const stars = new THREE.Points(starsGeometry, starsMaterial);
+            scene.add(stars);
+            
+            // Create some nebula-like fog
+            const fogColor = new THREE.Color(0x000022);
+            scene.fog = new THREE.FogExp2(fogColor, 0.0005);
+            scene.background = fogColor;
+            
+            // Add some floating particles
+            const particleCount = 600;
+            const particlesGeometry = new THREE.BufferGeometry();
+            const particlesPositions = new Float32Array(particleCount * 4);
+            const particlesColors = new Float32Array(particleCount * 4);
+            
+            for (let i = 0; i < particleCount; i++) {
+                const i3 = i * 3;
+                particlesPositions[i3] = (Math.random() - 0.5) * 1000;
+                particlesPositions[i3 + 1] = (Math.random() - 0.5) * 1000;
+                particlesPositions[i3 + 2] = (Math.random() - 0.5) * 1000;
+                
+                particlesColors[i3] = Math.random() * 0.5 + 0.5;
+                particlesColors[i3 + 1] = Math.random() * 0.3;
+                particlesColors[i3 + 2] = Math.random() * 0.5 + 0.5;
+            }
+            
+            particlesGeometry.setAttribute('position', new THREE.BufferAttribute(particlesPositions, 3));
+            particlesGeometry.setAttribute('color', new THREE.BufferAttribute(particlesColors, 3));
+            
+            const particlesMaterial = new THREE.PointsMaterial({
+                size: 3,
+                sizeAttenuation: true,
+                vertexColors: true,
+                transparent: true,
+                opacity: 0.5
+            });
+            
+            const particles = new THREE.Points(particlesGeometry, particlesMaterial);
+            scene.add(particles);
+            
+            camera.position.z = 100;
+            
+            // Animation loop
+            function animate() {
+                requestAnimationFrame(animate);
+                
+                stars.rotation.x += 0.0001;
+                stars.rotation.y += 0.0001;
+                
+                particles.rotation.z += 0.001;
+                
+                renderer.render(scene, camera);
+            }
+            
+            animate();
+            
+            // Handle window resize
+            window.addEventListener('resize', function() {
+                const width = bgContainer.clientWidth;
+                const height = bgContainer.clientHeight;
+                
+                camera.aspect = width / height;
+                camera.updateProjectionMatrix();
+                renderer.setSize(width, height);
+            });
+            
+            // Animate skills on scroll
+            const skillBars = document.querySelectorAll('.skill-progress');
+            
+            function animateSkillsOnScroll() {
+                skillBars.forEach(bar => {
+                    if (isInViewport(bar)) {
+                        bar.style.animation = 'animateSkill 1.5s ease-out forwards';
+                    }
+                });
+            }
+            
+            function isInViewport(element) {
+                const rect = element.getBoundingClientRect();
+                return (
+                    rect.top >= 0 &&
+                    rect.left >= 0 &&
+                    rect.bottom <= (window.innerHeight || document.documentElement.clientHeight) &&
+                    rect.right <= (window.innerWidth || document.documentElement.clientWidth)
+                );
+            }
+            
+            window.addEventListener('scroll', animateSkillsOnScroll);
+            animateSkillsOnScroll();
+            
+            // Smooth scrolling for navigation
+            document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+                anchor.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    
+                    document.querySelector(this.getAttribute('href')).scrollIntoView({
+                        behavior: 'smooth'
+                    });
+                });
+            });
+            
+            // Mobile menu toggle
+            const mobileMenuButton = document.querySelector('.md\\:hidden');
+            const mobileMenu = document.querySelector('.hidden.md\\:flex.space-x-8');
+            
+            mobileMenuButton.addEventListener('click', function() {
+                mobileMenu.classList.toggle('hidden');
+            });
+            
+            // Floating animation for elements
+            function addFloatingAnimation() {
+                const floatingElements = document.querySelectorAll('.floating');
+                
+                floatingElements.forEach((element, index) => {
+                    element.style.animationDelay = `${index * 0.2}s`;
+                });
+            }
+            
+            addFloatingAnimation();
+            
+            // Cursor trail effect
+            const cursorTrail = document.getElementById('cursor-trail');
+            let mouseX = 0, mouseY = 0;
+            let trailElements = [];
+            
+            // Create trail elements
+            for (let i = 0; i < 5; i++) {
+                const trailElement = document.createElement('div');
+                trailElement.className = 'trail-dot';
+                trailElement.style.position = 'fixed';
+                trailElement.style.width = '10px';
+                trailElement.style.height = '10px';
+                trailElement.style.borderRadius = '50%';
+                trailElement.style.backgroundColor = `rgba(${Math.floor(Math.random() * 155 + 100)}, 
+                                                          ${Math.floor(Math.random() * 100)}, 
+                                                          ${Math.floor(Math.random() * 155 + 100)}, 0.7)`;
+                trailElement.style.transform = 'translate(-50%, -50%)';
+                trailElement.style.pointerEvents = 'none';
+                trailElement.style.zIndex = '9999';
+                trailElement.style.transition = `all 0.${i}s ease`;
+                trailElement.style.opacity = '0';
+                document.body.appendChild(trailElement);
+                trailElements.push(trailElement);
+            }
+            
+            // Update mouse position
+            document.addEventListener('mousemove', (e) => {
+                mouseX = e.clientX;
+                mouseY = e.clientY;
+            });
+            
+            // Animate trail
+            function animateTrail() {
+                let prevX = mouseX;
+                let prevY = mouseY;
+                
+                trailElements.forEach((element, i) => {
+                    if (!element) return;
+                    
+                    const x = prevX;
+                    const y = prevY;
+                    
+                    // Update element position with easing
+                    element.style.left = x + 'px';
+                    element.style.top = y + 'px';
+                    element.style.opacity = '1';
+                    
+                    // Scale and fade out
+                    const scale = 1 - (i * 0.15);
+                    element.style.transform = `translate(-50%, -50%) scale(${scale})`;
+                    
+                    // Update previous positions for next element
+                    prevX = x;
+                    prevY = y;
+                });
+                
+                requestAnimationFrame(animateTrail);
+            }
+            
+            animateTrail();
+            
+            // Form submission
+            const contactForm = document.getElementById('contactForm');
+            
+            contactForm.addEventListener('submit', function(e) {
+                e.preventDefault();
+                
+                const formData = new FormData(this);
+                const name = formData.get('name');
+                const email = formData.get('email');
+                const subject = formData.get('subject');
+                const message = formData.get('message');
+                
+                // Here you would typically send the data to a server
+                console.log('Form submitted:', { name, email, subject, message });
+                
+                // Show success message
+                alert(`Thanks for your message, ${name}! I'll get back to you soon.`);
+                contactForm.reset();
+            });
+        });
+    </script>
+</body>
+</html>
+
